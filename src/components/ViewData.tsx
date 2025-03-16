@@ -35,7 +35,7 @@ const ViewData = ({ extractedData, onCreateTemplate }: ViewDataProps) => {
     };
 
     setLoading(true);
-    setError(null); // Reseteamos cualquier error previo
+    setError(null); 
 
     try {
       const response = await fetch("http://127.0.0.1:5000/crear-plantilla", {
