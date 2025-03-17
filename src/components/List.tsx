@@ -1,5 +1,5 @@
-
-const List = ({ data }: any) => {
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const List = ({ data, onDoubleClickTemplate }: { data: any, onDoubleClickTemplate: (template: any) => void }) => {
     return (
         <>
             {data?.plantillas && data.plantillas.length > 0 ? (
@@ -14,11 +14,14 @@ const List = ({ data }: any) => {
                         </thead>
                         <tbody className="text-gray-600 text-sm">
                             {data.plantillas.map((plantilla: any, index: number) => (
-                                <tr className="border-b border-gray-200 hover:bg-gray-100" key={index}>
+                                <tr
+                                    key={index}
+                                    className="border-b border-gray-200 hover:bg-gray-100 cursor-pointer"
+                                    onDoubleClick={() => onDoubleClickTemplate(plantilla)} // 👈 Manejo del doble clic
+                                >
                                     <td className="py-3 px-6 text-left">{plantilla.id}</td>
                                     <td className="py-3 px-6 text-left">{plantilla.nombre}</td>
-                                    <td className="py-3 px-6 text-left">{plantilla.descripcion}
-                                    </td>
+                                    <td className="py-3 px-6 text-left">{plantilla.descripcion}</td>
                                 </tr>
                             ))}
                         </tbody>

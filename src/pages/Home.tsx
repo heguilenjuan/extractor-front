@@ -13,7 +13,10 @@ const Home = () => {
         <Layout>
             <InputFile onDataExtracted={setData} />
             {data && (
-                <ViewData extractedData={data} onCreateTemplate={setTemplate} />
+                <ViewData extractedData={data} onCreateTemplate={(template) => {
+                    setTemplate(template);
+                    setIsModalOpen(true);
+                }} />
             )}
             <Modal isOpen={isModalOpen} templateData={template} onClose={() => setIsModalOpen(false)} />
 

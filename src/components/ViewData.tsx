@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { useState } from "react";
 
 interface ViewDataProps {
@@ -7,8 +8,8 @@ interface ViewDataProps {
 
 const ViewData = ({ extractedData, onCreateTemplate }: ViewDataProps) => {
   const [fields, setFields] = useState<{ [key: string]: string }>({});
-  const [templateName, setTemplateName] = useState<string>(""); // Estado para el nombre de la plantilla
-  const [templateDescription, setTemplateDescription] = useState<string>(""); // Estado para la descripción de la plantilla
+  const [templateName, setTemplateName] = useState<string>("");
+  const [templateDescription, setTemplateDescription] = useState<string>("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -35,7 +36,7 @@ const ViewData = ({ extractedData, onCreateTemplate }: ViewDataProps) => {
     };
 
     setLoading(true);
-    setError(null); 
+    setError(null);
 
     try {
       const response = await fetch("http://127.0.0.1:5000/crear-plantilla", {
