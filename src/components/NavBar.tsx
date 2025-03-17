@@ -1,12 +1,16 @@
 import { NavLink } from "react-router-dom";
-
+import pdfImg from "../assets/pdf.jpg";
+import extractImg from '../assets/extract.png';
 const NavBar = () => {
     return (
         <header className="lg:px-16 px-4 bg-white flex flex-wrap items-center py-4 shadow-md">
             <div className="flex-1 flex justify-between items-center">
                 <NavLink to="/" className="text-xl">
-
-                    Extract PDF/Paradigma
+                    <div className="flex">
+                        <img src={pdfImg} width={30} height={30} />
+                        <img src={extractImg} width={30} height={30} />
+                    </div>
+                    <h1>Paradigma</h1>
                 </NavLink>
             </div>
 
