@@ -38,8 +38,8 @@ const InputFile = ({ onDataExtracted }: InputFileProps) => {
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
                             </svg>
                             <span className="font-medium text-gray-600">
-                                Arrastra el archivo, o
-                                <span className="text-blue-600 underline ml-[4px]">buscalo</span>
+                                Elegi el archivo
+                                <span className="text-blue-600 underline ml-[4px]">.PDF</span>
                             </span>
                         </span>
                         <input type="file" name="file_upload" className="hidden" accept=".pdf" onChange={handleFileChange} />

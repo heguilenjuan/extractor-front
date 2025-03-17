@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
 import List from "../components/List";
 import Modal from "../components/Modal";
@@ -13,7 +14,7 @@ const Plantillas = () => {
 
     useEffect(() => {
         fetchData("/plantillas");
-    }, [fetchData]);
+    }, []);
 
     return (
         <Layout>
