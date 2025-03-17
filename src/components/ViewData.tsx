@@ -7,10 +7,20 @@ interface ViewDataProps {
   onCreateTemplate: (template: unknown) => void;
 }
 
-const DATOS_REDUCIDOS = ["nombre", "tipo", "comprobante", "fecha_comprobante", "forma_de_pago", "clase", "total", "total_excento"];
+const DATOS_REDUCIDOS = [
+  { id: "nombre", name: "Nombre" },
+  { id: "tipo", name: "Tipo" },
+  { id: "comprobante", name: "Comprobante" },
+  { id: "fecha_comprobante", name: "Fecha Comprobante" },
+  { id: "forma_de_pago", name: "Forma de Pago" },
+  { id: "clase", name: "Clase" },
+  { id: "total", name: "Total" },
+  { id: "total_excento", name: "Total Excento" },
+  { id: "cuit", name: "CUIT" },
+];
 
 const ViewData = ({ extractedData, onCreateTemplate }: ViewDataProps) => {
-  const [fields, setFields] = useState<{ [key: string]: string }>({});
+  const [fields, setFields] = useState<{ [key: string]: string | null }>({});
   const [templateName, setTemplateName] = useState("");
   const [templateDescription, setTemplateDescription] = useState("");
   const [loading, setLoading] = useState(false);
@@ -105,8 +115,8 @@ const ViewData = ({ extractedData, onCreateTemplate }: ViewDataProps) => {
             <div className="w-1/3">
               <SelectInput
                 options={DATOS_REDUCIDOS}
-                selectedOptions={fields[field] ? [fields[field]] : []}
-                onChange={(selected) => handleFieldChange(field, selected[0] || "")}
+                selectedOptions={fields[field] || null} // Enviar el valor directamente, no un array
+                onChange={(selected) => handleFieldChange(field, selected)}
               />
             </div>
           </div>

@@ -28,7 +28,7 @@ const NavBar = () => {
                             <NavLink className="md:p-4 py-3 px-0 block" to="/plantillas">Plantillas</NavLink>
                         </li>
                         <li>
-                            <NavLink className="md:p-4 py-3 px-0 block" to="#">Extraer con plantilla</NavLink>
+                            <NavLink className="md:p-4 py-3 px-0 block" to="/extract-plantilla">Extraer con plantilla</NavLink>
                         </li>
                     </ul>
                 </nav>

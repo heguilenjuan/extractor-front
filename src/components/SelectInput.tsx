@@ -1,19 +1,19 @@
 import { useState } from "react";
 
 interface SelectInputProps {
-  options: string[];
-  selectedOptions: string[];
-  onChange: (selected: string[]) => void;
+  options: { id: string; name: string }[]; // Cambié para que sea más específico
+  selectedOptions: string | null; // Se asume solo una opción seleccionada
+  onChange: (selected: string) => void;
 }
 
 const SelectInput = ({ options, selectedOptions, onChange }: SelectInputProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const toggleOption = (option: string) => {
-    if (selectedOptions.includes(option)) {
-      onChange(selectedOptions.filter((item) => item !== option));
+    if (selectedOptions === option) {
+      onChange(null); // Deseleccionar si ya está seleccionado
     } else {
-      onChange([...selectedOptions, option]);
+      onChange(option); // Seleccionar opción
     }
     setIsOpen(false); // Cierra el menú al seleccionar
   };
@@ -26,7 +26,7 @@ const SelectInput = ({ options, selectedOptions, onChange }: SelectInputProps) =
         onClick={() => setIsOpen(!isOpen)}
       >
         <span className="block truncate">
-          {selectedOptions.length ? selectedOptions.join(", ") : "Seleccionar opciones"}
+          {selectedOptions ? options.find(opt => opt.id === selectedOptions)?.name : "Seleccionar opción"}
         </span>
       </button>
 
@@ -34,12 +34,12 @@ const SelectInput = ({ options, selectedOptions, onChange }: SelectInputProps) =
         <div className="absolute z-10 mt-1 w-full bg-white shadow-lg max-h-60 rounded-md py-1 text-base ring-1 ring-black ring-opacity-5 overflow-auto">
           {options.map((option) => (
             <div
-              key={option}
+              key={option.id}
               className="cursor-pointer select-none relative py-2 pl-3 pr-9 hover:bg-indigo-600 hover:text-white"
-              onClick={() => toggleOption(option)}
+              onClick={() => toggleOption(option.id)}
             >
-              <span className="block truncate">{option}</span>
-              {selectedOptions.includes(option) && (
+              <span className="block truncate">{option.name}</span>
+              {selectedOptions === option.id && (
                 <span className="absolute inset-y-0 right-0 flex items-center pr-4 text-indigo-600">
                   ✓
                 </span>
