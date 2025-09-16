@@ -1,80 +1,37 @@
-import React from 'react';
-import { Document, Page, pdfjs } from 'react-pdf';
+import { useEffect, useMemo, useState } from "react";
 
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
-
-export interface PdfViewerProps {
-  file: File | string | null;
-  page: number;               // 0-based
-  scale?: number;
-  onDocumentLoad?: (meta: { numPages: number }) => void;
-  onPageChange?: (page0: number) => void;
-  onScaleChange?: (scale: number) => void;
+interface Props {
+    file?: File;
+    className?: string;
 }
 
-const PdfViewer: React.FC<PdfViewerProps> = ({
-  file,
-  page,
-  scale = 1,
-  onDocumentLoad,
-  onPageChange,
-  onScaleChange
-}) => {
-  const [numPages, setNumPages] = React.useState(0);
+const PdfViewer = ({ file, className }: Props) => {
+    const [error, setError] = useState<string | null>(null);
+    const url = useMemo(() => (file ? URL.createObjectURL(file) : ""), [file]);
 
-  const handleDocLoad = (info: { numPages: number }) => {
-    setNumPages(info.numPages);
-    onDocumentLoad?.({ numPages: info.numPages });
-  };
+    useEffect(() => {
+        return () => {
+            if (url) URL.revokeObjectURL(url);
+        };
+    }, [url]);
 
-  const go = (p: number) => {
-    const clamped = Math.max(0, Math.min(p, Math.max(0, numPages - 1)));
-    if (clamped !== page) onPageChange?.(clamped);
-  };
-  const zoom = (s: number) => {
-    const next = Math.max(0.25, Math.min(s, 4));
-    if (next !== scale) onScaleChange?.(next);
-  };
+    if (!file) return null;
 
-  return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center justify-between text-sm text-gray-600">
-        <div>Página {page + 1} / {numPages || '-'}</div>
-        <div className="flex items-center gap-2">
-          <button className="rounded border px-2 py-1" onClick={() => go(page - 1)} disabled={page <= 0}>◀︎</button>
-          <button className="rounded border px-2 py-1" onClick={() => go(page + 1)} disabled={page >= numPages - 1}>▶︎</button>
-          <div className="mx-2 h-5 w-px bg-gray-200" />
-          <button className="rounded border px-2 py-1" onClick={() => zoom(scale - 0.1)}>-</button>
-          <span className="w-12 text-center">{Math.round(scale * 100)}%</span>
-          <button className="rounded border px-2 py-1" onClick={() => zoom(scale + 0.1)}>+</button>
-          <button className="rounded border px-2 py-1" onClick={() => zoom(1)}>Reset</button>
-        </div>
-      </div>
-
-      <div className="relative mx-auto">
-        {file ? (
-          <Document file={file} onLoadSuccess={handleDocLoad} loading={<Skeleton />}>
-            {numPages > 0 && (
-              <Page
-                pageNumber={page + 1}
-                scale={scale}
-                renderTextLayer={false}
-                renderAnnotationLayer={false}
-              />
+    return (
+        <div className={`${className} relative`}>
+            {error && (
+                <div className="absolute inset-0 flex items-center justify-center bg-red-50 rounded-lg border border-red-200">
+                    <p className="text-red-500 text-center p-4">{error}</p>
+                </div>
             )}
-          </Document>
-        ) : (
-          <div className="grid h-[420px] w-[640px] place-items-center rounded-xl border border-dashed text-gray-500">
-            Cargá un PDF para comenzar
-          </div>
-        )}
-      </div>
-    </div>
-  );
+            <iframe
+                src={url}
+                className="w-full h-[70vh] rounded-lg border"
+                onError={() => setError("Error al cargar el PDF. Asegúrate de que es un archivo válido.")}
+                title="Vista previa del PDF"
+            />
+        </div>
+    );
 };
-
-const Skeleton: React.FC = () => (
-  <div className="h-[420px] w-[640px] animate-pulse rounded-xl bg-gray-100" />
-);
 
 export default PdfViewer;
