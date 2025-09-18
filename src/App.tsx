@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { pdfjs } from 'react-pdf';
+import { pdfjs } from "react-pdf";
 import PdfViewer from "./components/Viewer/PdfViewerWithAnnotations";
+import FileField from "./components/Fields/FileField";
 
 pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.mjs',
-  import.meta.url,
+  "pdfjs-dist/build/pdf.worker.min.mjs",
+  import.meta.url
 ).toString();
 
 export default function App() {
@@ -17,15 +18,9 @@ export default function App() {
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <input
-        type="file"
-        accept=".pdf,application/pdf"
-        onChange={handleChange}
-      />
-      <div style={{ marginTop: "20px" }}>
-        {file && <PdfViewer file={file} />}
-      </div>
+    <div className="p-6 flex flex-col text-center items-center">
+      <FileField onChange={handleChange} />
+      {file && <PdfViewer file={file} className="w-full max-w-7xl" />}
     </div>
   );
 }
