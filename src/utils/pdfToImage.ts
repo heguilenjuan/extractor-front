@@ -22,9 +22,8 @@ export interface ConversionResult {
   pageNumber?: number;
 }
 
-/**
- * Convierte un archivo PDF a imagen (Data URL) usando solo pdfjs-dist
- */
+/* Convierte un archivo PDF a imagen (Data URL) usando solo pdfjs-dist*/
+
 export const convertPdfToImage = async (
   pdfFile: File,
   options: PdfConversionOptions = {}
@@ -34,7 +33,7 @@ export const convertPdfToImage = async (
       scale = 2.0,
       pageNumber = 1,
       imageFormat = 'png',
-      imageQuality = 0.95,
+      imageQuality = 0.99,
       maxWidth = 1600,
       dpi = 150
     } = options;
@@ -62,7 +61,7 @@ export const convertPdfToImage = async (
     const page = await pdfDocument.getPage(pageNumber);
 
     // Calcular escala basada en DPI si se especifica
-    const actualScale = dpi ? dpi / 72 : scale; // 72 DPI es el estándar de PDF
+    const actualScale = dpi ? dpi / 72 : scale;
     const viewport = page.getViewport({ scale: actualScale });
 
     // 4. Crear canvas para renderizar el PDF
@@ -120,8 +119,6 @@ export const convertPdfToImage = async (
 const optimizeCanvasSize = async (
   canvas: HTMLCanvasElement,
   maxWidth: number,
-  _format: string,
-  _quality: number
 ): Promise<HTMLCanvasElement> => {
   if (!maxWidth || canvas.width <= maxWidth) {
     return canvas;
@@ -202,7 +199,7 @@ export const getPdfMetadata = async (pdfFile: File): Promise<{
       fileSize: pdfFile.size
     };
   } catch (error) {
-    throw new Error('No se pudieron obtener los metadatos del PDF');
+    throw new Error(`No se pudieron obtener los metadatos del PDF ${error}`);
   }
 };
 
