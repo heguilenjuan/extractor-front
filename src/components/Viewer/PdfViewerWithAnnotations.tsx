@@ -3,11 +3,18 @@ import { usePdfAnnotations, type Section } from './usePdfAnnotations';
 
 interface Props {
   file?: File;
+  imageData?: string; // Nuevo prop para la imagen convertida
   className?: string;
   onSectionsChange?: (sections: Section[]) => void;
+  onSaveTemplate?: (sections: Section[], templateName: string) => void;
 }
 
-const PdfViewerWithAnnotations: React.FC<Props> = ({ file, className, onSectionsChange }) => {
+const PdfViewerWithAnnotations: React.FC<Props> = ({
+  file,
+  imageData,
+  className,
+  onSectionsChange
+}) => {
   const {
     error,
     sections,
@@ -15,7 +22,6 @@ const PdfViewerWithAnnotations: React.FC<Props> = ({ file, className, onSections
     currentSection,
     selectedSection,
     selectedSectionData,
-    url,
     containerRef,
     setError,
     startDrawing,
@@ -27,7 +33,7 @@ const PdfViewerWithAnnotations: React.FC<Props> = ({ file, className, onSections
     setIsDrawing
   } = usePdfAnnotations({ file, onSectionsChange });
 
-  if (!file) return null;
+  if (!file && !imageData) return null;
 
   return (
     <div className={`${className} relative`} ref={containerRef}>
@@ -46,45 +52,23 @@ const PdfViewerWithAnnotations: React.FC<Props> = ({ file, className, onSections
         >
           🖌️ Dibujar Sección
         </button>
-        <p className="text-sm text-gray-600">Haz clic y arrastra sobre el PDF</p>
+        <p className="text-sm text-gray-600">Haz clic y arrastra sobre la imagen</p>
       </div>
 
       {/* Panel de edición */}
       {selectedSectionData && (
         <div className="absolute right-4 top-4 z-30 bg-white p-4 rounded-lg shadow-lg w-80">
-          <h3 className="font-semibold mb-3">Editar Sección</h3>
+          <h3 className="font-bold text-xl">Crear sección</h3>
 
           <div className="space-y-3">
             <div>
-              <label className="block text-sm font-medium mb-1">Tipo de Dato</label>
+              <label className="block text-sm font-medium mb-1 pt-3">Nombre:</label>
               <input
                 type="text"
                 value={selectedSectionData.dataType}
                 onChange={(e) => updateSection(selectedSection!, { dataType: e.target.value })}
-                placeholder="Ej: Nombre, Email, Teléfono..."
+                placeholder="Ej: Datos del Proveedor, Importes de factura, etc"
                 className="w-full p-2 border rounded"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Regex Validación</label>
-              <input
-                type="text"
-                value={selectedSectionData.regex}
-                onChange={(e) => updateSection(selectedSection!, { regex: e.target.value })}
-                placeholder="Ej: ^[a-zA-Z ]+$"
-                className="w-full p-2 border rounded font-mono text-sm"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-1">Descripción</label>
-              <textarea
-                value={selectedSectionData.description}
-                onChange={(e) => updateSection(selectedSection!, { description: e.target.value })}
-                placeholder="Describe qué dato extraer..."
-                className="w-full p-2 border rounded resize-none"
-                rows={3}
               />
             </div>
 
@@ -105,9 +89,8 @@ const PdfViewerWithAnnotations: React.FC<Props> = ({ file, className, onSections
           {sections.map((section) => (
             <div
               key={section.id}
-              className={`p-2 mb-1 rounded cursor-pointer ${
-                selectedSection === section.id ? 'bg-blue-100' : 'bg-gray-100'
-              }`}
+              className={`p-2 mb-1 rounded cursor-pointer ${selectedSection === section.id ? 'bg-blue-100' : 'bg-gray-100'
+                }`}
               onClick={() => setSelectedSection(section.id)}
             >
               <div className="flex justify-between items-center">
@@ -176,12 +159,17 @@ const PdfViewerWithAnnotations: React.FC<Props> = ({ file, className, onSections
         )}
       </div>
 
-      <iframe
-        src={url}
-        className="w-full h-[70vh] rounded-lg border"
-        onError={() => setError("Error al cargar el PDF")}
-        title="Vista previa del PDF"
-      />
+      {/* Mostrar imagen en lugar del iframe */}
+      {imageData ? (
+        <img
+          src={imageData}
+          alt="Vista previa del PDF convertido"
+          className="w-full h-auto max-h-[70vh] object-contain rounded-lg border"
+          onError={() => setError("Error al cargar la imagen")}
+        />
+      )
+        : null
+      }
     </div>
   );
 };

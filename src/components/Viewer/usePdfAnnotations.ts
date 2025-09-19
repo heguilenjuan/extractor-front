@@ -17,7 +17,9 @@ interface UsePdfAnnotationsProps {
 }
 
 export const usePdfAnnotations = ({ file, onSectionsChange }: UsePdfAnnotationsProps) => {
+  //Manejo de
   const [error, setError] = useState<string | null>(null);
+
   const [sections, setSections] = useState<Section[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [currentSection, setCurrentSection] = useState<Partial<Section> | null>(null);
