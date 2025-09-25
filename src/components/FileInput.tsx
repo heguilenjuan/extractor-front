@@ -15,11 +15,11 @@ export default function FileField({
     const inputId = "file-field";
 
     return (
-        <div className="flex flex-col gap-2 w-64 p-4">
-            {label && <span className="text-sm font-semibold text-gray-800">{label}</span>}
+        <div className="flex flex-col gap-2 w-64 p-4 items-center w-full">
+            {label && <span className="text-xl p-5 font-semibold text-gray-800">{label}</span>}
             <label
                 htmlFor={inputId}
-                className="inline-block cursor-pointer rounded-lg px-4 py-2 text-sm font-medium 
+                className="inline-block cursor-pointer rounded-lg px-4 py-2 text-sm w-[15rem] text-center font-medium 
         shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-400"
             >
                 Subir archivo
