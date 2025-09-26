@@ -5,6 +5,8 @@ import { useTemplateSteps } from "./Template/useTemplate";
 import { useFields } from "./Fields/useFields";
 import Overlay from "./Overlay/Overlay";
 import FieldPanel from "./Fields/FieldPanel";
+import ReviewPanel from "./Template/ReviewePanel";
+import { useTemplateReview } from "./Template/useTemplateReview";
 
 const RENDER_WIDTH = 600;
 
@@ -15,8 +17,17 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
   const [h, setH] = useState(Math.round(RENDER_WIDTH * 1.414));
 
   const overlay = useOverlay({ width: w, height: h });
-  const { step, goDefine, goDraw, templateName, setTemplateName } = useTemplateSteps();
+  const { step, goDefine, goDraw, goReview, goCreate, templateName, setTemplateName } = useTemplateSteps();
   const { fieldsByBox, forBox, add, patch, remove, clearBox } = useFields();
+  const { reviewOpen, preview, issues, submitting, openReview, closeReview, submitTemplate } = useTemplateReview({
+    templateName,
+    boxes: overlay.boxes,
+    fieldsByBox,
+    meta: { pageCount: numPages ?? undefined, renderWidth: w, renderHeight: h },
+    onSuccess: () => {
+
+    }
+  })
 
   const onDeleteBox = () => {
     const id = overlay.selectedId;
@@ -43,6 +54,9 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
           </span>
           <span className={`px-2 py-1 rounded ${step === 'define' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
             Paso 2: Definir campos
+          </span>
+          <span className={`px-2 py-1 rounded ${step === 'create' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
+            Paso 3: Armar la plantilla
           </span>
         </div>
 
@@ -81,7 +95,6 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
                 onRename={(name) => overlay.renameSelected(name)}
                 onDelete={onDeleteBox}
               />
-
             </div>
           </div>
         </div>
@@ -116,14 +129,20 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
               className="px-4 py-2 rounded border"
               onClick={() => (step === 'draw' ? goDefine() : goDraw())}
             >
-              {step === 'draw' ? 'Definir campos' : 'Volver a dibujar'}
+              {step === 'draw' ? 'Definir campos' : 'Volver a secciones'}
             </button>
 
             {/* Ejemplo de uso del payload? */}
-            {/* <button className="px-4 py-2 rounded bg-emerald-600 text-white"
-                    onClick={() => console.log(buildPayload())}>
-              Guardar
-            </button> */}
+            <button
+              className="px-4 py-2 rounded bg-emerald-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
+              onClick={ () => {
+                openReview()
+                goReview()
+              }}
+              disabled={!overlay.boxes.length}
+            >
+              {!overlay.boxes.length ? "Agrega al menos un Box" : "Crear plantilla"}
+            </button>
           </div>
         </div>
       </div>
@@ -141,6 +160,16 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
 
       {step === 'define' && !selectedBox && (
         <div className="text-sm text-gray-600">Seleccioná un box para definir sus campos.</div>
+      )}
+
+      {preview && (
+        <ReviewPanel
+          payload={preview}
+          issues={issues}
+          submitting={submitting}
+          onClose={closeReview}
+          onSubmit={submitTemplate}
+        />
       )}
     </div>
   );

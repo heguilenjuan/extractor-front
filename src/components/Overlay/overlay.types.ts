@@ -5,6 +5,7 @@ export interface Box {
     y: number;
     w: number;
     h: number;
+    page?:number;
 }
 export interface BoxInPercent {
     x: number;
