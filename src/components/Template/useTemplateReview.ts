@@ -35,6 +35,7 @@ export function useTemplateReview({
     }, [templateName, boxes, fieldsByBox, meta]);
 
     const closeReview = useCallback(() => setReviewOpen(false), []);
+    
     const submitTemplate = useCallback(async () => {
         if (!preview) return;
         const errs = validateTemplate(preview);

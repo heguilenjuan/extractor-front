@@ -7,6 +7,7 @@ import Overlay from "./Overlay/Overlay";
 import FieldPanel from "./Fields/FieldPanel";
 import ReviewPanel from "./Template/ReviewePanel";
 import { useTemplateReview } from "./Template/useTemplateReview";
+import axios from "axios";
 
 const RENDER_WIDTH = 600;
 
@@ -26,7 +27,18 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
     meta: { pageCount: numPages ?? undefined, renderWidth: w, renderHeight: h },
     onSuccess: () => {
 
+    },
+    customPost: async (templateData) => {
+    try {
+        const response = await axios.post('/api/v1/templates', {
+            ...templateData
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error al guardar plantilla:', error);
+        throw error;
     }
+}
   })
 
   const onDeleteBox = () => {
@@ -55,7 +67,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
           <span className={`px-2 py-1 rounded ${step === 'define' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
             Paso 2: Definir campos
           </span>
-          <span className={`px-2 py-1 rounded ${step === 'create' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
+          <span className={`px-2 py-1 rounded ${step === 'review' ? 'bg-blue-600 text-white' : 'bg-gray-100'}`}>
             Paso 3: Armar la plantilla
           </span>
         </div>
@@ -86,7 +98,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
                 height={h}
                 boxes={overlay.boxes}
                 selectedId={overlay.selectedId}
-                onBackgroundPointerDown={(x, y) => step === 'draw' ? overlay.createAt(x, y) : overlay.selectBox(null)}
+                onBackgroundPointerDown={(x, y) => step === 'draw' ? overlay.createAt(x, y, pageNumber) : overlay.selectBox(null)}
                 onBeginMove={(id, x, y) => overlay.beginMove(id, x, y)}
                 onBeginResize={(id, handle, x, y) => overlay.beginResize(id, handle, x, y)}
                 onPointerMove={(x, y) => overlay.onPointerMove(x, y)}
@@ -162,7 +174,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
         <div className="text-sm text-gray-600">Seleccioná un box para definir sus campos.</div>
       )}
 
-      {preview && (
+      { reviewOpen && preview && (
         <ReviewPanel
           payload={preview}
           issues={issues}

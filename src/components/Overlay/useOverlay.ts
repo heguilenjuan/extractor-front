@@ -22,9 +22,9 @@ export function useOverlay({ width, height }: { width: number; height: number })
     setSelectedId(id);
   }, []);
 
-  const createAt = useCallback((x: number, y: number) => {
+  const createAt = useCallback((x: number, y: number, pageNumber:number) => {
     const id = crypto.randomUUID();
-    const box: Box = { id, x, y, w: 0, h: 0, name: "" };
+    const box: Box = { id, x, y, w: 0, h: 0, name: "", page:pageNumber };
     setBoxes(prev => [...prev, box]);
     setSelectedId(id);
     setMode("creating");
