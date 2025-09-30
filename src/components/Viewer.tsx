@@ -10,6 +10,8 @@ import { useTemplateReview } from "./Template/useTemplateReview";
 import axios from "axios";
 
 const RENDER_WIDTH = 600;
+const URI = 'http://localhost:8000'
+
 
 export default function Viewer({ fileUrl }: { fileUrl?: string }) {
   const [numPages, setNumPages] = useState<number | null>(null);
@@ -18,7 +20,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
   const [h, setH] = useState(Math.round(RENDER_WIDTH * 1.414));
 
   const overlay = useOverlay({ width: w, height: h });
-  const { step, goDefine, goDraw, goReview, goCreate, templateName, setTemplateName } = useTemplateSteps();
+  const { step, goDefine, goDraw, goReview, templateName, setTemplateName } = useTemplateSteps();
   const { fieldsByBox, forBox, add, patch, remove, clearBox } = useFields();
   const { reviewOpen, preview, issues, submitting, openReview, closeReview, submitTemplate } = useTemplateReview({
     templateName,
@@ -29,16 +31,24 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
 
     },
     customPost: async (templateData) => {
-    try {
-        const response = await axios.post('/api/v1/templates', {
-            ...templateData
+      try {
+        const payload = {
+          id: `template-${Date.now()}-${templateData.name}`,
+          ...templateData
+        }
+
+        const response = await axios.post(`${URI}/api/v1/templates`, payload, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
+
         return response.data;
-    } catch (error) {
+      } catch (error) {
         console.error('Error al guardar plantilla:', error);
         throw error;
+      }
     }
-}
   })
 
   const onDeleteBox = () => {
@@ -49,12 +59,6 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
 
   const selectedBox = overlay.getBoxById(overlay.selectedId);
   const selectedFields = selectedBox ? forBox(selectedBox.id) : [];
-
-  const buildPayload = () => ({
-    name: templateName,
-    boxes: overlay.boxes.map(({ id, x, y, w, h, name }) => ({ id, x, y, w, h, name })),
-    fields: Object.values(fieldsByBox).flat(), // <-- incluye campos con su boxId
-  });
 
   return (
     <div className="flex flex-col items-center min-h-screen p-6 gap-6">
@@ -147,7 +151,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
             {/* Ejemplo de uso del payload? */}
             <button
               className="px-4 py-2 rounded bg-emerald-600 text-white disabled:bg-gray-300 disabled:cursor-not-allowed"
-              onClick={ () => {
+              onClick={() => {
                 openReview()
                 goReview()
               }}
@@ -174,7 +178,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
         <div className="text-sm text-gray-600">Seleccioná un box para definir sus campos.</div>
       )}
 
-      { reviewOpen && preview && (
+      {reviewOpen && preview && (
         <ReviewPanel
           payload={preview}
           issues={issues}
