@@ -4,7 +4,6 @@ import type { Field } from "../Fields/fields.types";
 import type { ValidationIssue, Meta, TemplatePayload } from "./templates.types";
 import { buildPayload } from "./buildPayload";
 import { validateTemplate } from "./validateTemplate";
-import { postTemplate } from "./postTemplate";
 
 
 export function useTemplateReview({
@@ -44,7 +43,7 @@ export function useTemplateReview({
 
         try {
             setSubmitting(true);
-            const postFn = customPost ?? postTemplate;
+            const postFn = customPost;
             const saved = postFn(preview);
             onSuccess?.(saved);
             setReviewOpen(false);
