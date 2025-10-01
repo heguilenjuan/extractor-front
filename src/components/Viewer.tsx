@@ -40,8 +40,6 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
     ),
   };
 
-
-
   const { reviewOpen, preview, issues, submitting, openReview, closeReview, submitTemplate } = useTemplateReview({
     templateName,
     boxes: overlay.boxes,
