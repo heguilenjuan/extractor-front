@@ -48,7 +48,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
     onSuccess: () => { },
     customPost: async (templateData) => {
       console.log({ templateData })
-/*         try {
+        try {
           const payload = {
             id: `template-${Date.now()}-${templateData.name}`,
             ...templateData
@@ -64,7 +64,7 @@ export default function Viewer({ fileUrl }: { fileUrl?: string }) {
         } catch (error) {
           console.error('Error al guardar plantilla:', error);
           throw error;
-        } */
+        }
 
       
     }
